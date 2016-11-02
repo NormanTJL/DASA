@@ -8,6 +8,7 @@ public class server{
 	public server(){
 		try {
        	//calculator c = new calculatorimpl();
+		Runtime.getRuntime().exec("rmiregistry 1099");
        	servant s1 = new servant();	
        	ainter a_inter = (ainter)UnicastRemoteObject.exportObject(s1, 0);
        	Naming.rebind("rmi://localhost:" + port + "/Auction", a_inter);

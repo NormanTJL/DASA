@@ -23,7 +23,7 @@ public class auctionitem{
 
 	}
 	public void setDate(long newTime){
-		newTime = newTime/1000;
+		newTime = newTime + (System.currentTimeMillis()/1000);
 		closingtime = newTime;
 	}
 }
