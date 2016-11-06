@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 import java.rmi.*;
-
+import java.text.*;
 
 public class client {
 static HashMap<String, auctionitem> listofItems = new HashMap<String, auctionitem>();
@@ -13,7 +13,7 @@ static Boolean status=false;
        int reg_port = 1099;
         Boolean exit = false;
        String choice;
-        servant s1 = null;
+        ainter s1 = null;
         if(args.length!= 0){
           reg_host = args[0];
               if(args.length < 2){
@@ -27,7 +27,7 @@ static Boolean status=false;
 		     try {
 
       // Create the reference to the remote object through the remiregistry     
-            s1 = (servant)Naming.lookup("rmi://" + reg_host + ":" + reg_port + "/Auction");
+            s1 = (ainter)Naming.lookup("rmi://" + reg_host + ":" + reg_port + "/Auction");
 		      }
         catch(Exception e){
 
@@ -51,10 +51,13 @@ static Boolean status=false;
 
               }
               else if(choice.equals("3")){
-                
+                runProg(s1, choice);
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");    
+
                 if(!listofauctions.isEmpty()){
                   for(String asd : listofauctions.keySet()){
-                  System.out.println("Name: "+listofauctions.get(asd).name + "\nValue: " + listofauctions.get(asd).itemValue + "\nClosing time: " + listofauctions.get(asd).closingtime+"s") ;
+                    Date resultdate = new Date(listofauctions.get(asd).closingtime*1000);
+                  System.out.println("\nId: " + listofauctions.get(asd).randomid + "\nName: "+listofauctions.get(asd).name + "\nValue: " + listofauctions.get(asd).bidValue + "\nClosing time: " + (sdf.format(resultdate))+"\n") ;
                   } 
                 }
                 else{
@@ -74,7 +77,7 @@ static Boolean status=false;
         }
     }
     
-private static void runProg(servant s1, String choice){
+private static void runProg(ainter s1, String choice){
     try{
         if(choice.equals("1")){
         status = s1.createAuctionItem(aItem);
@@ -97,8 +100,10 @@ private static void runProg(servant s1, String choice){
 		String valueInput = System.console().readLine();
     System.out.print("Please Enter Closing time/date in seconds: ");
     String closingTime = System.console().readLine();
+
 		aItem.setName(nameinput);
 		aItem.setValue(valueInput);
+    aItem.setStartTime(System.currentTimeMillis()/1000);
 		aItem.setDate(Long.parseLong(closingTime));
 		return aItem;
 	}
