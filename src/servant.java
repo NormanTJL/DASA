@@ -8,6 +8,7 @@ public class servant implements ainter{
 			status=false;
 			listofauctions.put(aItem.name, aItem);
 			status=true;
+			System.out.println(listofauctions.get(aItem.name));
 			return status;
 	}
 	public boolean bidAuctionItems(String nameofItem) throws java.rmi.RemoteException{
@@ -15,8 +16,7 @@ public class servant implements ainter{
 			return status;
 	}
 	public HashMap<String, auctionitem> listAuctionItems() throws java.rmi.RemoteException{
-		HashMap<String, auctionitem> hMap = listofauctions;
-		return hMap;
+		return listofauctions;
 	}
 	public boolean saveState() throws java.rmi.RemoteException{
 			status=true;

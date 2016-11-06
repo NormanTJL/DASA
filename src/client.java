@@ -14,6 +14,16 @@ static Boolean status=false;
         Boolean exit = false;
        String choice;
         servant s1 = null;
+        if(args.length!= 0){
+          reg_host = args[0];
+              if(args.length < 2){
+                reg_port = 1099;
+              }
+              if(args.length == 2){
+                reg_port = Integer.parseInt(args[1]);
+              }
+
+         } 
 		     try {
 
       // Create the reference to the remote object through the remiregistry     
@@ -23,25 +33,25 @@ static Boolean status=false;
 
         }
         finally{     
-           while(!exit){
-           		System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Save State\n5) Exit\nInput choice: ");
-           		
-           		choice = System.console().readLine();
-           		if(choice.equals("1")){
-           			aItem = createAuction();
-           			status = s1.createAuctionItem(aItem);
-           			if(!status){
-           				System.out.println("Successfully Created Auction Item");
-           				listofItems.put(aItem.name, aItem);
-           				System.out.print("Press any key to continue");
-           				System.console().readLine();
-           			}
-           		}
-           		else if(choice.equals("2")){
+            while(!exit){
+              System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Save State\n5) Exit\nInput choice: ");
+              
+              choice = System.console().readLine();
+              if(choice.equals("1")){
+                aItem = createAuction();
+                runProg(s1, choice);
+                if(!status){
+                  System.out.println("Successfully Created Auction Item");
+                  listofItems.put(aItem.name, aItem);
+                  System.out.print("Press any key to continue");
+                  System.console().readLine();
+                }
+              }
+              else if(choice.equals("2")){
 
-           		}
-           		else if(choice.equals("3")){
-                listofauctions = s1.listAuctionItems();
+              }
+              else if(choice.equals("3")){
+                
                 if(!listofauctions.isEmpty()){
                   for(String asd : listofauctions.keySet()){
                   System.out.println("Name: "+listofauctions.get(asd).name + "\nValue: " + listofauctions.get(asd).itemValue + "\nClosing time: " + listofauctions.get(asd).closingtime+"s") ;
@@ -50,20 +60,34 @@ static Boolean status=false;
                 else{
                   System.out.println("No auctions available right now");
                 } 
-           		}
-           		else if(choice.equals("4")){
+              }
+              else if(choice.equals("4")){
 
-           		}
-           		else if (choice.equals("5")){
-           			exit = true;
-           		}
-           		else{
-           			System.out.println("Invalid Choice.");
-           		}
+              }
+              else if (choice.equals("5")){
+                exit = true;
+              }
+              else{
+                System.out.println("Invalid Choice.");
+              }
            }
         }
     }
     
+private static void runProg(servant s1, String choice){
+    try{
+        if(choice.equals("1")){
+        status = s1.createAuctionItem(aItem);
+        }
+        else if(choice.equals("3")){
+          listofauctions = s1.listAuctionItems();
+        }  
+    }
+    catch(Exception e){
+
+    }
+    
+}
 
 	private static auctionitem createAuction(){
 		auctionitem aItem = new auctionitem();
