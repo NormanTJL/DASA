@@ -6,9 +6,13 @@ import java.text.*;
 public class client {
 static HashMap<String, auctionitem> listofItems = new HashMap<String, auctionitem>();
 static HashMap<String, auctionitem> listofauctions = new HashMap<String, auctionitem>();
-static auctionitem aItem = new auctionitem();
+static String myEmail="";
+static auctionitem aItem = new auctionitem(myEmail);
 static Boolean status=false;
+
 	public static void main(String args[]){
+    System.out.print("Please Enter your email: ");
+      myEmail = System.console().readLine();
         String reg_host = "localhost";
        int reg_port = 1099;
         Boolean exit = false;
@@ -34,7 +38,7 @@ static Boolean status=false;
         }
         finally{     
             while(!exit){
-              System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Save State\n5) Exit\nInput choice: ");
+              System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
               
               choice = System.console().readLine();
               if(choice.equals("1")){
@@ -48,7 +52,29 @@ static Boolean status=false;
                 }
               }
               else if(choice.equals("2")){
+                System.out.print("Item to bid: ");
+                String itemtobid = System.console().readLine();
+                String itembidValue = "";
+                runProg(s1,"3");
+                if(!listofauctions.isEmpty()){
+                  for(String itemofauction : listofauctions.keySet()){
+                    if(listofauctions.get(itemofauction).randomid == listofauctions.get(itemtobid).randomid){
+                      System.out.print("Current value is: " + listofauctions.get(itemtobid).bidValue + "\nPlease bid higher then the current bid: ");
+                      itembidValue = System.console().readLine();
+                      aItem = listofauctions.get(itemtobid);
+                      aItem.setbidValue(itembidValue);
+                      aItem.setEmail(myEmail);
+                      runProg(s1, choice);
+                      System.out.println("Press any key to continue");
+                      System.console().readLine();
+                    }
+                        
+                  } 
 
+                }                
+                else{
+                      System.out.println("Item not found, please check the list of current bids again to check if the auction has been closed.");
+                }
               }
               else if(choice.equals("3")){
                 runProg(s1, choice);
@@ -57,17 +83,18 @@ static Boolean status=false;
                 if(!listofauctions.isEmpty()){
                   for(String asd : listofauctions.keySet()){
                     Date resultdate = new Date(listofauctions.get(asd).closingtime*1000);
-                  System.out.println("\nId: " + listofauctions.get(asd).randomid + "\nName: "+listofauctions.get(asd).name + "\nValue: " + listofauctions.get(asd).bidValue + "\nClosing time: " + (sdf.format(resultdate))+"\n") ;
+                    String winningemail = listofauctions.get(asd).winningemail;
+                    if(listofauctions.get(asd).winningemail == ""){
+                      winningemail = "No Bidder yet";
+                    }
+                  System.out.println("\nId: " + listofauctions.get(asd).randomid + "\nName: "+listofauctions.get(asd).name + "\nValue: " + listofauctions.get(asd).bidValue + "\nCurrent highest bidder: "+ winningemail +"\nClosing time: " + (sdf.format(resultdate))+"\n") ;
                   } 
                 }
                 else{
                   System.out.println("No auctions available right now");
                 } 
               }
-              else if(choice.equals("4")){
-
-              }
-              else if (choice.equals("5")){
+              else if (choice.equals("4")){
                 exit = true;
               }
               else{
@@ -82,9 +109,13 @@ private static void runProg(ainter s1, String choice){
         if(choice.equals("1")){
         status = s1.createAuctionItem(aItem);
         }
+        else if(choice.equals("2")){
+          status = s1.bidAuctionItems(aItem);
+        }
         else if(choice.equals("3")){
+          listofauctions = null;
           listofauctions = s1.listAuctionItems();
-        }  
+        }
     }
     catch(Exception e){
 
@@ -93,7 +124,7 @@ private static void runProg(ainter s1, String choice){
 }
 
 	private static auctionitem createAuction(){
-		auctionitem aItem = new auctionitem();
+		auctionitem aItem = new auctionitem(myEmail);
 		System.out.print("Please Enter name for New Auction Item: ");
 		String nameinput = System.console().readLine();
 		System.out.print("Please Enter value for New Auction Item: ");
@@ -108,4 +139,5 @@ private static void runProg(ainter s1, String choice){
 		return aItem;
 	}
 }
+
 

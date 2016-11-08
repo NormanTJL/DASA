@@ -7,13 +7,19 @@ public class auctionitem implements java.io.Serializable{
 	long starttime;
 	long closingtime;
 	double bidValue=0.0;
-	public auctionitem(){
+	String winningemail = "";
+	String creatoremail="";
+	public auctionitem(String myEmail){
 		name="";
 		randomid= "";
 		startValue=0.0;
 		starttime = 0;
 		closingtime = 0;
 		bidValue = 0.0;
+		creatoremail = myEmail;
+	}
+	public void setEmail(String newemail){
+		winningemail = newemail;
 	}
 	public void setName(String newName){
 		name = newName;
@@ -45,9 +51,14 @@ public class auctionitem implements java.io.Serializable{
 		}
 		if(newdvalue > startValue && newdvalue > bidValue){
 			bidValue = newdvalue;
+			System.out.println("you are now the highest bidder.");
 		}
 		else{
 			System.out.println("Your bid is lower than the current bid, bid not accepted.");
 		}
 	}
+	public void setClosetime(long closeTime){
+		closingtime = closeTime;
+	}
+	
 }

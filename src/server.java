@@ -2,6 +2,7 @@ import java.util.*;
 import java.rmi.*;
 import java.rmi.Naming;	//Import naming classes to bind to rmiregistry
 import java.rmi.server.UnicastRemoteObject;
+import java.io.*;
 public class server{
 	static int port = 1099;
 	
@@ -11,6 +12,11 @@ public class server{
 		//Runtime.getRuntime().exec("rmiregistry 1099");
 
        	servant s1 = new servant();	
+       	File varTmpDir = new File("savedstate.csv");
+		boolean exists = varTmpDir.exists();
+		if(exists){
+			s1.loadState();
+		}
        	ainter a_inter = (ainter)UnicastRemoteObject.exportObject(s1, 0);
        	Naming.rebind("rmi://localhost:" + port + "/Auction", a_inter);
      } 
