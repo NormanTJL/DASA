@@ -1,11 +1,34 @@
 import java.io.*;
 import java.util.*;
 
-public class servant implements ainter{
+public class servant implements ainter, Runnable{
 	static HashMap<String, auctionitem> listofauctions = new HashMap<String, auctionitem>();
 	static HashMap<String, auctionitem> currentListofAuction = new HashMap<String, auctionitem>();		
 	private HashMap<String, clientinter> clientList = new HashMap<String, clientinter>();
+	private HashMap<String, Thread> listofTimer = new HashMap<String, Thread>();
+	static String winningmsg[];
+	static String ownermsg[];
 	boolean status;
+	long timertime=0;
+
+	public void run(){
+		try{	
+		Thread.currentThread().sleep(timertime);
+		System.out.println("asd");
+		String msg[] = new String[2];
+
+			System.out.println("aaa");	
+			msg[0] = Thread.currentThread().getName();
+			System.out.println("abb");
+			msg[1] = Double.toString(currentListofAuction.get(msg[0]).bidValue);
+			System.out.println("abc");
+			clientList.get(currentListofAuction.get(msg[0]).winningemail).notifyWinner(msg);
+			System.out.println("add");
+			clientList.get(currentListofAuction.get(msg[0]).creatoremail).notifyOwner(msg);
+			System.out.println("abd");
+			}
+		catch(Exception e){}
+	}
 	public boolean createAuctionItem(auctionitem aItem) throws java.rmi.RemoteException{
 			status=false;
 			int id=0;
@@ -15,7 +38,14 @@ public class servant implements ainter{
 			else{
 				id = listofauctions.size()+1;
 			}
+
 			aItem.randomid = Integer.toString(id);
+			Thread t1 = new Thread(aItem.randomid);
+			timertime = aItem.closingtime - System.currentTimeMillis()/1000;
+			timertime*=1000;
+			System.out.println(timertime);
+			t1.start();
+			listofTimer.put(aItem.randomid, t1);
 			listofauctions.put(aItem.randomid, aItem);
 			status=true;
 			System.out.println(listofauctions.get(aItem.name));
@@ -108,34 +138,19 @@ public class servant implements ainter{
 		return currentListofAuction;
 	}
 	
-	public synchronized void registerForCallback(clientinter callbackobj) throws java.rmi.RemoteException{
+	public void registerForCallback(clientinter callbackobj) throws java.rmi.RemoteException{
       // store the callback object into the vector
-      if ((clientList.get("1")!=null)) {
-         clientList.put("1", callbackobj);
-      System.out.println("Registered new client ");
-      doCallbacks();
-    } // end if
+		boolean status = false;
+		
+      for(String email:clientList.keySet()){
+      	if(email.equals(callbackobj.getEmail())){
+      		status= true;
+      	}
+      }
+      if(status==false){
+      	clientList.put(callbackobj.getEmail(), callbackobj);
+      }
+      
+     // end if
   }
-  public synchronized void unregisterForCallback(clientinter callbackobj) throws java.rmi.RemoteException{
-    /*if (clientList.remove("1")) {
-      System.out.println("Unregistered client ");
-    } else {
-       System.out.println(
-         "unregister: client wasn't registered.");
-    }*/
-  }   
-  private synchronized void doCallbacks( ) throws java.rmi.RemoteException{
-    // make callback to each registered client
-    String msg[] = new String[2];
-    for (int i = 0; i < clientList.size(); i++){
-      System.out.println("doing "+ i +"-th callback\n");    
-      // convert the vector object to a callback object
-      //clientinter nextClient = (clientinter)clientList.elementAt(i);
-      // invoke the callback method
-      	msg[0] = currentListofAuction.get(Integer.toString(i)).randomid;
-      	msg[1] = Double.toString(currentListofAuction.get(Integer.toString(i)).bidValue);
-        //nextClient.notifyMe(msg);
-    }// end for
-    System.out.println("********************************\n" + "Server completed callbacks ---");
-  } // doCallbacks
 }

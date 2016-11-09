@@ -2,13 +2,19 @@ import java.io.*;
 import java.util.*;
 import java.rmi.*;
 import java.text.*;
+import java.rmi.server.UnicastRemoteObject;
 
-public class client {
+public class client extends UnicastRemoteObject implements clientinter, Runnable{
 static HashMap<String, auctionitem> listofItems = new HashMap<String, auctionitem>();
 static HashMap<String, auctionitem> listofauctions = new HashMap<String, auctionitem>();
 static String myEmail="";
 static auctionitem aItem = new auctionitem(myEmail);
 static Boolean status=false;
+static ainter s1 = null;
+
+ public client() throws RemoteException {
+      super();
+   }
 
 	public static void main(String args[]){
     System.out.print("Please Enter your email: ");
@@ -17,7 +23,7 @@ static Boolean status=false;
        int reg_port = 1099;
         Boolean exit = false;
        String choice;
-        ainter s1 = null;
+        
         if(args.length!= 0){
           reg_host = args[0];
               if(args.length < 2){
@@ -32,6 +38,10 @@ static Boolean status=false;
 
       // Create the reference to the remote object through the remiregistry     
             s1 = (ainter)Naming.lookup("rmi://" + reg_host + ":" + reg_port + "/Auction");
+            Thread onethread = new Thread(new client());
+            onethread.start();
+            
+          
 		      }
         catch(Exception e){
 
@@ -95,7 +105,7 @@ static Boolean status=false;
                 } 
               }
               else if (choice.equals("4")){
-                exit = true;
+                System.exit(0);
               }
               else{
                 System.out.println("Invalid Choice.");
@@ -103,7 +113,18 @@ static Boolean status=false;
            }
         }
     }
-    
+public String notifyWinner(String message[]) throws java.rmi.RemoteException{
+    System.out.println("You have won the bid for item: "+ message[0] + "\nWith the value of: "+message[1]);
+     Thread onethread = new Thread(new client());
+       onethread.start();
+    return " ";
+}
+ public String notifyOwner(String message[]) throws java.rmi.RemoteException{
+    System.out.println("Your item: "+ message[0] + " bid\nHave been completed ith the value of: "+message[1]);
+    Thread onethread = new Thread(new client());
+    onethread.start();
+    return " ";
+ }
 private static void runProg(ainter s1, String choice){
     try{
         if(choice.equals("1")){
@@ -122,7 +143,17 @@ private static void runProg(ainter s1, String choice){
     }
     
 }
+public void run(){
+  try{
+  s1.registerForCallback(this);
+  }
+  catch(Exception e){
 
+  }
+}
+public String getEmail(){
+  return myEmail;
+}
 	private static auctionitem createAuction(){
 		auctionitem aItem = new auctionitem(myEmail);
 		System.out.print("Please Enter name for New Auction Item: ");
