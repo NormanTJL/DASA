@@ -11,23 +11,32 @@ public class servant implements ainter, Runnable{
 	boolean status;
 	long timertime=0;
 
+	@Override
 	public void run(){
-		try{	
-		Thread.currentThread().sleep(timertime);
-		System.out.println("asd");
-		String msg[] = new String[2];
+		auctionitem aIt = listofauctions.get(Thread.currentThread().getName());
+		
+		if(aIt!= null){
+			System.out.println(Thread.currentThread().getName());
+		try{
+		
+		timertime = listofauctions.get(Thread.currentThread().getName()).closingtime-System.currentTimeMillis()/1000;
+		timertime*=1000;
+		Thread.sleep(timertime);
 
-			System.out.println("aaa");	
+	
+		String msg[] = new String[4];
 			msg[0] = Thread.currentThread().getName();
-			System.out.println("abb");
-			msg[1] = Double.toString(currentListofAuction.get(msg[0]).bidValue);
-			System.out.println("abc");
-			clientList.get(currentListofAuction.get(msg[0]).winningemail).notifyWinner(msg);
-			System.out.println("add");
-			clientList.get(currentListofAuction.get(msg[0]).creatoremail).notifyOwner(msg);
-			System.out.println("abd");
+			msg[1] = Double.toString(listofauctions.get(msg[0]).bidValue);
+			msg[2] = listofauctions.get(msg[0]).winningemail;
+			msg[3] = listofauctions.get(msg[0]).creatoremail;
+			clientinter winner = clientList.get(listofauctions.get(msg[0]).winningemail);
+			winner.notifyWinner(msg);
+			clientinter creator = clientList.get(listofauctions.get(msg[0]).creatoremail);
+			creator.notifyOwner(msg);
+			
 			}
 		catch(Exception e){}
+		}
 	}
 	public boolean createAuctionItem(auctionitem aItem) throws java.rmi.RemoteException{
 			status=false;
@@ -40,15 +49,16 @@ public class servant implements ainter, Runnable{
 			}
 
 			aItem.randomid = Integer.toString(id);
-			Thread t1 = new Thread(aItem.randomid);
+			Thread t1 = new Thread(this, aItem.randomid);
 			timertime = aItem.closingtime - System.currentTimeMillis()/1000;
 			timertime*=1000;
 			System.out.println(timertime);
 			t1.start();
+
 			listofTimer.put(aItem.randomid, t1);
 			listofauctions.put(aItem.randomid, aItem);
 			status=true;
-			System.out.println(listofauctions.get(aItem.name));
+			//System.out.println(listofauctions.get(aItem.name));
 			saveState();
 			return status;
 	}
@@ -140,17 +150,22 @@ public class servant implements ainter, Runnable{
 	
 	public void registerForCallback(clientinter callbackobj) throws java.rmi.RemoteException{
       // store the callback object into the vector
-		boolean status = false;
+		boolean status1 = false;
+		clientinter c1 = callbackobj;
 		
-      for(String email:clientList.keySet()){
-      	if(email.equals(callbackobj.getEmail())){
-      		status= true;
-      	}
-      }
-      if(status==false){
-      	clientList.put(callbackobj.getEmail(), callbackobj);
-      }
+		if(clientList.size() != 0){
+		      for(String email:clientList.keySet()){
+		   	   	
+		      	if(email.equals(c1.getEmail())){
+		      		status1= true;
+		      	}
+		      }
+  		}
       
-     // end if
+      if(status1==false){
+      	
+      	clientList.put(callbackobj.getEmail(), c1);
+      }
+      System.out.println("size of client list: " + clientList.size());     // end if
   }
 }

@@ -4,14 +4,14 @@ import java.rmi.*;
 import java.text.*;
 import java.rmi.server.UnicastRemoteObject;
 
-public class client extends UnicastRemoteObject implements clientinter, Runnable{
+public class client implements clientinter, Runnable{
 static HashMap<String, auctionitem> listofItems = new HashMap<String, auctionitem>();
 static HashMap<String, auctionitem> listofauctions = new HashMap<String, auctionitem>();
 static String myEmail="";
 static auctionitem aItem = new auctionitem(myEmail);
 static Boolean status=false;
 static ainter s1 = null;
-
+static clientinter c1 = null;
  public client() throws RemoteException {
       super();
    }
@@ -34,17 +34,23 @@ static ainter s1 = null;
               }
 
          } 
+         
 		     try {
 
       // Create the reference to the remote object through the remiregistry     
             s1 = (ainter)Naming.lookup("rmi://" + reg_host + ":" + reg_port + "/Auction");
-            Thread onethread = new Thread(new client());
-            onethread.start();
+            
+            c1 = new client(); 
+            UnicastRemoteObject.exportObject(c1,0);
+            
+            Thread t1 = new Thread(new client());
+            
+            t1.start();
             
           
 		      }
         catch(Exception e){
-
+          System.out.println(e);
         }
         finally{     
             while(!exit){
@@ -57,7 +63,7 @@ static ainter s1 = null;
                 if(!status){
                   System.out.println("Successfully Created Auction Item");
                   listofItems.put(aItem.name, aItem);
-                  System.out.print("Press any key to continue");
+                  System.out.print("Press Enter key to continue");
                   System.console().readLine();
                 }
               }
@@ -75,7 +81,7 @@ static ainter s1 = null;
                       aItem.setbidValue(itembidValue);
                       aItem.setEmail(myEmail);
                       runProg(s1, choice);
-                      System.out.println("Press any key to continue");
+                      System.out.println("Press Enter key to continue");
                       System.console().readLine();
                     }
                         
@@ -114,15 +120,17 @@ static ainter s1 = null;
         }
     }
 public String notifyWinner(String message[]) throws java.rmi.RemoteException{
-    System.out.println("You have won the bid for item: "+ message[0] + "\nWith the value of: "+message[1]);
-     Thread onethread = new Thread(new client());
-       onethread.start();
+    System.out.println("\n********Congratulations!********\nYou have won the bid for item: "+ message[0] + "\nWith the value of: "+message[1]+"Contact: " + message[3]);
+    System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
+     //Thread onethread = new Thread(new client());
+      // onethread.start();
     return " ";
 }
  public String notifyOwner(String message[]) throws java.rmi.RemoteException{
-    System.out.println("Your item: "+ message[0] + " bid\nHave been completed ith the value of: "+message[1]);
-    Thread onethread = new Thread(new client());
-    onethread.start();
+    System.out.println("\n********Notification********\nYour item bid: "+ message[0] + " \nHave been completed ith the value of: "+message[1]+"Winner: " + message[2]);
+    System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
+    //Thread onethread = new Thread(new client());
+    //onethread.start();
     return " ";
  }
 private static void runProg(ainter s1, String choice){
@@ -143,14 +151,7 @@ private static void runProg(ainter s1, String choice){
     }
     
 }
-public void run(){
-  try{
-  s1.registerForCallback(this);
-  }
-  catch(Exception e){
 
-  }
-}
 public String getEmail(){
   return myEmail;
 }
@@ -169,6 +170,17 @@ public String getEmail(){
 		aItem.setDate(Long.parseLong(closingTime));
 		return aItem;
 	}
+@Override
+public void run(){
+  
+  try{
+    
+  s1.registerForCallback(c1);
+  }
+  catch(Exception e){
+
+  }
+}
 }
 
 

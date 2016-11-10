@@ -1,6 +1,7 @@
 import java.util.*;
 import java.io.*;
 public class auctionitem implements java.io.Serializable{
+	private static final long serialVersionUID = 123L;
 	String randomid;
 	String name;
 	double startValue;
