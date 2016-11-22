@@ -3,6 +3,7 @@ import java.util.*;
 import java.rmi.*;
 import java.text.*;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.*;
 
 public class client implements clientinter, Runnable{
 static HashMap<String, auctionitem> listofItems = new HashMap<String, auctionitem>();
@@ -17,8 +18,6 @@ static clientinter c1 = null;
    }
 
 	public static void main(String args[]){
-    System.out.print("Please Enter your email: ");
-      myEmail = System.console().readLine();
         String reg_host = "localhost";
        int reg_port = 1099;
         Boolean exit = false;
@@ -36,7 +35,8 @@ static clientinter c1 = null;
          } 
          
 		     try {
-
+             System.out.print("Please Enter your email: ");
+              myEmail = System.console().readLine();
       // Create the reference to the remote object through the remiregistry     
             s1 = (ainter)Naming.lookup("rmi://" + reg_host + ":" + reg_port + "/Auction");
             
@@ -46,11 +46,24 @@ static clientinter c1 = null;
             Thread t1 = new Thread(new client());
             
             t1.start();
-            
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+                executor.scheduleAtFixedRate(new Runnable() {
+                  final ExecutorService executor = Executors.newSingleThreadExecutor();
+                    Future<?> lastExecution;
+                    public void run(){
+                        try{
+                          s1.ping();                      
+                        }
+                        catch(Exception e){
+                          System.out.println("\nServer is not online!\nPlease restart the program");
+                          System.exit(0);
+                        }
+                }
+              }, 5, 5, TimeUnit.SECONDS);            
           
 		      }
         catch(Exception e){
-          System.out.println(e);
+          System.out.println("Server is not up!");
         }
         finally{     
             while(!exit){
@@ -120,18 +133,27 @@ static clientinter c1 = null;
         }
     }
 public String notifyWinner(String message[]) throws java.rmi.RemoteException{
-    System.out.println("\n********Congratulations!********\nYou have won the bid for item: "+ message[0] + "\nWith the value of: "+message[1]+"Contact: " + message[3]);
+    System.out.println("\n********Congratulations!********\nYou have won the bid for item: "+ message[0] + "\nWith the value of: "+message[1]+"\nContact: " + message[3]);
     System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
      //Thread onethread = new Thread(new client());
       // onethread.start();
     return " ";
 }
  public String notifyOwner(String message[]) throws java.rmi.RemoteException{
-    System.out.println("\n********Notification********\nYour item bid: "+ message[0] + " \nHave been completed ith the value of: "+message[1]+"Winner: " + message[2]);
+    System.out.println("\n********Notification********\nYour item bid: "+ message[0] + " \nHave been completed ith the value of: "+message[1]+"\nWinner: " + message[2]);
     System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
     //Thread onethread = new Thread(new client());
     //onethread.start();
     return " ";
+ }
+ public void notifyLoser(String message[]) throws java.rmi.RemoteException{
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+    Date resultdate = new Date(Long.parseLong(message[2])*1000);
+    System.out.println("\n********Bid lost********\nYour bid for item: "+message[0]+"\nitem name: "+message[1]+"\nitem closing time:" + (sdf.format(resultdate))+"has been lost");  
+    System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
+ }
+ public boolean ping(){
+    return true;
  }
 private static void runProg(ainter s1, String choice){
     try{

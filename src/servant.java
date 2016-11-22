@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class servant implements ainter, Runnable{
 	static HashMap<String, auctionitem> listofauctions = new HashMap<String, auctionitem>();
@@ -11,7 +12,6 @@ public class servant implements ainter, Runnable{
 	boolean status;
 	long timertime=0;
 
-	@Override
 	public void run(){
 		auctionitem aIt = listofauctions.get(Thread.currentThread().getName());
 		
@@ -65,13 +65,30 @@ public class servant implements ainter, Runnable{
 	public boolean bidAuctionItems(auctionitem aItem) throws java.rmi.RemoteException{
 			for(String aucID:currentListofAuction.keySet()){
 				if(currentListofAuction.get(aucID).randomid.equals(aItem.randomid)){
+					if(currentListofAuction.get(aucID).winningemail.equals("")==false){
+						callLoser(currentListofAuction.get(aucID));
+					}
 					currentListofAuction.get(aucID).setbidValue(Double.toString(aItem.bidValue));
 					currentListofAuction.get(aucID).setEmail(aItem.winningemail);
 					status=true;
+
 				}
 			}
 			saveState();
 			return status;
+	}
+	public void callLoser(auctionitem aItem){
+		String msg[] = new String[3];
+		clientinter c1 = clientList.get(aItem.winningemail);
+		msg[0] = aItem.randomid;
+		msg[1] = aItem.name;
+		msg[2] = String.valueOf(aItem.closingtime);
+		try{
+			c1.notifyLoser(msg);	
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
 	}
 	public HashMap<String, auctionitem> listAuctionItems() throws java.rmi.RemoteException{
 		HashMap<String, auctionitem> asd = checkifexpired();
@@ -133,6 +150,25 @@ public class servant implements ainter, Runnable{
 		catch(Exception e){
 
 		}
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		executor.scheduleAtFixedRate(new Runnable() {
+			final ExecutorService executor = Executors.newSingleThreadExecutor();
+    		Future<?> lastExecution;
+    		public void run(){
+    				for(String email:clientList.keySet()){
+    					try{
+    						clientList.get(email).ping();
+    					}
+    					catch(Exception e){
+    						clientList.remove(email);
+    					}
+    				}
+        	
+    }
+	}, 10, 10, TimeUnit.SECONDS);
+	}
+	public void ping(){
+		
 	}
 	public servant() throws java.rmi.RemoteException{
 		super();
