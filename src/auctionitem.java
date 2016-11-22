@@ -50,13 +50,6 @@ public class auctionitem implements java.io.Serializable{
 		catch(Exception e){
 			System.out.println("Invalid Value");
 		}
-		if(newdvalue > startValue && newdvalue > bidValue){
-			bidValue = newdvalue;
-			System.out.println("you are now the highest bidder.");
-		}
-		else{
-			System.out.println("Your bid is lower than the current bid, bid not accepted.");
-		}
 	}
 	public void setClosetime(long closeTime){
 		closingtime = closeTime;

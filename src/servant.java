@@ -168,7 +168,7 @@ public class servant implements ainter, Runnable{
 	}, 10, 10, TimeUnit.SECONDS);
 	}
 	public void ping(){
-		
+			
 	}
 	public servant() throws java.rmi.RemoteException{
 		super();
@@ -200,6 +200,10 @@ public class servant implements ainter, Runnable{
       
       if(status1==false){
       	
+      	clientList.put(callbackobj.getEmail(), c1);
+      }
+      else{
+      	clientList.remove(callbackobj.getEmail());
       	clientList.put(callbackobj.getEmail(), c1);
       }
       System.out.println("size of client list: " + clientList.size());     // end if
