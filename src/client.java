@@ -103,9 +103,10 @@ static clientinter c1 = null;
                           itembidValue = System.console().readLine();
                           aItem = listofauctions.get(itemtobid);
                           try{
-                              if(Double.parseDouble(itembidValue) > aItem.bidValue){
+                              if(Double.parseDouble(itembidValue) > aItem.bidValue && Double.parseDouble(itembidValue) > aItem.startValue){
                                 aItem.setbidValue(itembidValue);
                                 aItem.setEmail(myEmail);
+                                System.out.println(aItem.bidValue);
                                 runProg(s1, choice);
                                 System.out.println("You are now the highest bidder\nPress Enter key to continue");
                                 System.console().readLine();
@@ -160,14 +161,14 @@ static clientinter c1 = null;
         }
     }
 public String notifyWinner(String message[]) throws java.rmi.RemoteException{
-    System.out.println("\n********Congratulations!********\nYou have won the bid for item: "+ message[0] + "\nWith the value of: "+message[1]+"\nContact: " + message[3]+"\n");
+    System.out.println("\n****************Congratulations!****************\nYou have won the bid for item: "+ message[0] + "\nWith the value of: "+message[1]+"\nOwner: " + message[3]+"\n");
     System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
      //Thread onethread = new Thread(new client());
       // onethread.start();
     return " ";
 }
  public String notifyOwner(String message[]) throws java.rmi.RemoteException{
-    System.out.println("\n********Notification********\nYour item bid: "+ message[0] + " \nHave been completed ith the value of: "+message[1]+"\nWinner: " + message[2]+"\n");
+    System.out.println("\n****************Notification****************\nYour item bid: "+ message[0] + " \nHave been completed ith the value of: "+message[1]+"\nWinner: " + message[2]+"\n");
     System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
     //Thread onethread = new Thread(new client());
     //onethread.start();
@@ -176,7 +177,7 @@ public String notifyWinner(String message[]) throws java.rmi.RemoteException{
  public void notifyLoser(String message[]) throws java.rmi.RemoteException{
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     Date resultdate = new Date(Long.parseLong(message[2])*1000);
-    System.out.println("\n********Bid lost********\nYour bid for item: "+message[0]+"\nitem name: "+message[1]+"\nitem closing time:" + (sdf.format(resultdate))+"has been lost");  
+    System.out.println("\n****************Bid lost****************\nYour bid for item: "+message[0]+"\nitem name: "+message[1]+"\nitem closing time:" + (sdf.format(resultdate))+"has been lost");  
     System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
  }
  public boolean ping(){

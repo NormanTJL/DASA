@@ -16,7 +16,6 @@ public class servant implements ainter, Runnable{
 		auctionitem aIt = listofauctions.get(Thread.currentThread().getName());
 		
 		if(aIt!= null){
-			System.out.println(Thread.currentThread().getName());
 		try{
 		
 		timertime = listofauctions.get(Thread.currentThread().getName()).closingtime-System.currentTimeMillis()/1000;
@@ -52,7 +51,6 @@ public class servant implements ainter, Runnable{
 			Thread t1 = new Thread(this, aItem.randomid);
 			timertime = aItem.closingtime - System.currentTimeMillis()/1000;
 			timertime*=1000;
-			System.out.println(timertime);
 			t1.start();
 
 			listofTimer.put(aItem.randomid, t1);
@@ -206,6 +204,6 @@ public class servant implements ainter, Runnable{
       	clientList.remove(callbackobj.getEmail());
       	clientList.put(callbackobj.getEmail(), c1);
       }
-      System.out.println("size of client list: " + clientList.size());     // end if
+//      System.out.println("size of client list: " + clientList.size());     // end if
   }
 }
