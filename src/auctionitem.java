@@ -43,9 +43,8 @@ public class auctionitem implements java.io.Serializable{
 
 	}
 	public void setbidValue(String newValue){
-		double newdvalue=startValue;
 		try{
-			newdvalue = Double.parseDouble(newValue);
+			bidValue = Double.parseDouble(newValue);
 		}
 		catch(Exception e){
 			System.out.println("Invalid Value");

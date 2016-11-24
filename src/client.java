@@ -103,9 +103,10 @@ static clientinter c1 = null;
                           itembidValue = System.console().readLine();
                           aItem = listofauctions.get(itemtobid);
                           try{
-                              if(Double.parseDouble(itembidValue) > aItem.bidValue){
+                              if(Double.parseDouble(itembidValue) > aItem.bidValue && Double.parseDouble(itembidValue) > aItem.startValue){
                                 aItem.setbidValue(itembidValue);
                                 aItem.setEmail(myEmail);
+                                System.out.println(aItem.bidValue);
                                 runProg(s1, choice);
                                 System.out.println("You are now the highest bidder\nPress Enter key to continue");
                                 System.console().readLine();
@@ -175,8 +176,8 @@ static clientinter c1 = null;
         }
     }
 public String notifyWinner(String message[]) throws java.rmi.RemoteException{
-    System.out.println("\n********Congratulations!********\nYou have won the bid for item: "+ message[0] + "\nWith the value of: "+message[1]+"\nContact: " + message[3]+"\n");
-    System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
+    System.out.println("\n****************Congratulations!****************\nYou have won the bid for item: "+ message[0] + "\nWith the value of: "+message[1]+"\nOwner: " + message[3]+"\n");
+    System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) List All past Auctions\n5) Exit\nInput Choice: ");
      //Thread onethread = new Thread(new client());
       // onethread.start();
     return " ";
@@ -199,6 +200,7 @@ public String notifyWinner(String message[]) throws java.rmi.RemoteException{
     Date resultdate = new Date(Long.parseLong(message[2])*1000);
     System.out.println("\n********Bid lost********\nYour bid for item: "+message[0]+"\nitem name: "+message[1]+"\nitem closing time:" + (sdf.format(resultdate))+"has been lost");  
     System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) List All past Auctions\n5) Exit\nInput Choice: ");
+
  }
  public boolean ping(){
     return true;
