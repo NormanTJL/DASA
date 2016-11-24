@@ -73,7 +73,7 @@ static clientinter c1 = null;
         finally{     
             while(!exit){
               System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) List All past Auctions\n5) Exit\nInput Choice: ");
-              
+                
               choice = System.console().readLine();
               if(choice.equals("1")){
                 aItem = createAuction();
@@ -106,7 +106,6 @@ static clientinter c1 = null;
                               if(Double.parseDouble(itembidValue) > aItem.bidValue && Double.parseDouble(itembidValue) > aItem.startValue){
                                 aItem.setbidValue(itembidValue);
                                 aItem.setEmail(myEmail);
-                                System.out.println(aItem.bidValue);
                                 runProg(s1, choice);
                                 System.out.println("You are now the highest bidder\nPress Enter key to continue");
                                 System.console().readLine();

@@ -17,7 +17,6 @@ public class servant implements ainter, Runnable{
 		
 		if(aIt!= null){
 		try{
-		
 		timertime = listofauctions.get(Thread.currentThread().getName()).closingtime-System.currentTimeMillis()/1000;
 		timertime*=1000;
 		Thread.sleep(timertime);
@@ -31,7 +30,7 @@ public class servant implements ainter, Runnable{
 			creator.notifyOwner(msg);
 		}
 		else{
-		String msg[] = new String[4];
+			String msg[] = new String[4];
 			msg[0] = Thread.currentThread().getName();
 			msg[1] = Double.toString(listofauctions.get(msg[0]).bidValue);
 			msg[2] = listofauctions.get(msg[0]).winningemail;
