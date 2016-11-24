@@ -16,14 +16,21 @@ public class servant implements ainter, Runnable{
 		auctionitem aIt = listofauctions.get(Thread.currentThread().getName());
 		
 		if(aIt!= null){
-			System.out.println(Thread.currentThread().getName());
 		try{
 		
 		timertime = listofauctions.get(Thread.currentThread().getName()).closingtime-System.currentTimeMillis()/1000;
 		timertime*=1000;
 		Thread.sleep(timertime);
 
-	
+		if(listofauctions.get(Thread.currentThread().getName()).winningemail.equals("")){
+			String msg[] = new String[3];
+			msg[0] = Thread.currentThread().getName();
+			msg[1] = Double.toString(listofauctions.get(msg[0]).bidValue);
+			msg[2] = listofauctions.get(msg[0]).creatoremail;
+			clientinter creator = clientList.get(listofauctions.get(msg[0]).creatoremail);
+			creator.notifyOwner(msg);
+		}
+		else{
 		String msg[] = new String[4];
 			msg[0] = Thread.currentThread().getName();
 			msg[1] = Double.toString(listofauctions.get(msg[0]).bidValue);
@@ -35,6 +42,7 @@ public class servant implements ainter, Runnable{
 			creator.notifyOwner(msg);
 			
 			}
+		}
 		catch(Exception e){}
 		}
 	}
@@ -95,12 +103,17 @@ public class servant implements ainter, Runnable{
 		saveState();
 		return asd;
 	}
+	public HashMap<String, auctionitem> listAllAuctionItems() throws java.rmi.RemoteException{
+		return listofauctions;
+	}
 	public void saveState() throws java.rmi.RemoteException{
 		try{
 		PrintWriter pw = new PrintWriter(new FileOutputStream("savedstate.csv", false));
         StringBuilder writer = new StringBuilder();
-
+        int count =0;
 			for(String key:listofauctions.keySet()){
+				if(count > 0){
+				writer.append('\n');
 				writer.append(listofauctions.get(key).randomid);
 				writer.append(",");
 				writer.append(listofauctions.get(key).name);	
@@ -116,7 +129,26 @@ public class servant implements ainter, Runnable{
 				writer.append(listofauctions.get(key).winningemail);	
 				writer.append(",");
 				writer.append(listofauctions.get(key).creatoremail);	
-				writer.append('\n');
+				count++;
+				}
+				else{
+				writer.append(listofauctions.get(key).randomid);
+				writer.append(",");
+				writer.append(listofauctions.get(key).name);	
+				writer.append(",");
+				writer.append(listofauctions.get(key).startValue);	
+				writer.append(",");
+				writer.append(listofauctions.get(key).starttime);	
+				writer.append(",");
+				writer.append(listofauctions.get(key).closingtime);	
+				writer.append(",");
+				writer.append(listofauctions.get(key).bidValue);	
+				writer.append(",");
+				writer.append(listofauctions.get(key).winningemail);	
+				writer.append(",");
+				writer.append(listofauctions.get(key).creatoremail);	
+				count++;
+				}
 			}
 			pw.write(writer.toString());
         	pw.close();
@@ -206,6 +238,6 @@ public class servant implements ainter, Runnable{
       	clientList.remove(callbackobj.getEmail());
       	clientList.put(callbackobj.getEmail(), c1);
       }
-      System.out.println("size of client list: " + clientList.size());     // end if
+      
   }
 }

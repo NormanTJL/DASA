@@ -72,7 +72,7 @@ static clientinter c1 = null;
         }
         finally{     
             while(!exit){
-              System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
+              System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) List All past Auctions\n5) Exit\nInput Choice: ");
               
               choice = System.console().readLine();
               if(choice.equals("1")){
@@ -150,7 +150,22 @@ static clientinter c1 = null;
                   System.out.println("No auctions available right now");
                 } 
               }
-              else if (choice.equals("4")){
+              else if(choice.equals("4")){
+                runProg(s1, choice);
+                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+                if(!listofauctions.isEmpty()){
+                  for(int asd=1;asd<=listofauctions.size();asd++){
+                    Date resultdate = new Date(listofauctions.get(String.valueOf(asd)).closingtime*1000);
+                    String winningemail = listofauctions.get(String.valueOf(asd)).winningemail;
+                    if(listofauctions.get(String.valueOf(asd)).winningemail == ""){
+                      winningemail = "No Bidder yet";
+                    }
+                  System.out.println("\nId: " + listofauctions.get(String.valueOf(asd)).randomid + "\nName: "+listofauctions.get(String.valueOf(asd)).name + "\nValue: " + listofauctions.get(String.valueOf(asd)).bidValue + "\nCurrent highest bidder: "+ winningemail +"\nClosing time: " + (sdf.format(resultdate))+"\n") ;
+                  } 
+                }
+
+              }
+              else if (choice.equals("5")){
                 System.exit(0);
               }
               else{
@@ -167,8 +182,14 @@ public String notifyWinner(String message[]) throws java.rmi.RemoteException{
     return " ";
 }
  public String notifyOwner(String message[]) throws java.rmi.RemoteException{
-    System.out.println("\n********Notification********\nYour item bid: "+ message[0] + " \nHave been completed ith the value of: "+message[1]+"\nWinner: " + message[2]+"\n");
-    System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
+  if(message.length == 4){
+    System.out.println("\n********Notification********\nYour item bid: "+ message[0] + " \nHave been completed with the value of: "+message[1]+"\nWinner: " + message[2]+"\n");
+    
+  }
+  else{
+    System.out.println("\n********Notification********\nYour item bid: "+ message[0] + " \nHave been completed\nNo one bidded for your item\nPlease Try Again\n");
+  }
+  System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) List All past Auctions\n5) Exit\nInput Choice: ");
     //Thread onethread = new Thread(new client());
     //onethread.start();
     return " ";
@@ -177,7 +198,7 @@ public String notifyWinner(String message[]) throws java.rmi.RemoteException{
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     Date resultdate = new Date(Long.parseLong(message[2])*1000);
     System.out.println("\n********Bid lost********\nYour bid for item: "+message[0]+"\nitem name: "+message[1]+"\nitem closing time:" + (sdf.format(resultdate))+"has been lost");  
-    System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) Exit\nInput choice: ");
+    System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) List All past Auctions\n5) Exit\nInput Choice: ");
  }
  public boolean ping(){
     return true;
@@ -193,6 +214,10 @@ private static void runProg(ainter s1, String choice){
         else if(choice.equals("3")){
           listofauctions = null;
           listofauctions = s1.listAuctionItems();
+        }
+        else if(choice.equals("4")){
+          listofauctions = null;
+          listofauctions = s1.listAllAuctionItems();
         }
     }
     catch(Exception e){
