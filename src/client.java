@@ -198,7 +198,7 @@ public String notifyWinner(String message[]) throws java.rmi.RemoteException{
  public void notifyLoser(String message[]) throws java.rmi.RemoteException{
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     Date resultdate = new Date(Long.parseLong(message[2])*1000);
-    System.out.println("\n********Bid lost********\nYour bid for item: "+message[0]+"\nitem name: "+message[1]+"\nitem closing time:" + (sdf.format(resultdate))+"has been lost");  
+    System.out.println("\n********Bid losing********\nYour bid for item: "+message[0]+"\nitem name: "+message[1]+"\nitem closing time:" + (sdf.format(resultdate))+"\nhas been lost");  
     System.out.print("Choose option\n1) Create Auction Item\n2) Bid Item\n3) List Auction Items\n4) List All past Auctions\n5) Exit\nInput Choice: ");
 
  }
