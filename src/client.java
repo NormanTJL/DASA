@@ -29,7 +29,7 @@ static clientinter c1 = null;
                 reg_port = 1099;
               }
               if(args.length == 2){
-                reg_port = Integer.parseInt(args[1]);
+                reg_host = args[1];
               }
 
          } 

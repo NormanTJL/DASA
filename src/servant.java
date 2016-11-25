@@ -45,7 +45,7 @@ public class servant implements ainter, Runnable{
 		catch(Exception e){}
 		}
 	}
-	public boolean createAuctionItem(auctionitem aItem) throws java.rmi.RemoteException{
+	public synchronized boolean createAuctionItem(auctionitem aItem) throws java.rmi.RemoteException{
 			status=false;
 			int id=0;
 			if(listofauctions.isEmpty()){
@@ -68,7 +68,7 @@ public class servant implements ainter, Runnable{
 			saveState();
 			return status;
 	}
-	public boolean bidAuctionItems(auctionitem aItem) throws java.rmi.RemoteException{
+	public synchronized boolean bidAuctionItems(auctionitem aItem) throws java.rmi.RemoteException{
 			for(String aucID:currentListofAuction.keySet()){
 				if(currentListofAuction.get(aucID).randomid.equals(aItem.randomid)){
 					if(currentListofAuction.get(aucID).winningemail.equals("")==false){
@@ -96,7 +96,7 @@ public class servant implements ainter, Runnable{
 			System.out.println(e);
 		}
 	}
-	public HashMap<String, auctionitem> listAuctionItems() throws java.rmi.RemoteException{
+	public synchronized HashMap<String, auctionitem> listAuctionItems() throws java.rmi.RemoteException{
 		HashMap<String, auctionitem> asd = checkifexpired();
 		saveState();
 		return asd;
